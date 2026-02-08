@@ -1,0 +1,99 @@
+<!doctype html>
+<html dir="rtl">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Carte Interactive</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+
+    <body>
+        <div class="map-container">
+            <img src="algeria_map.png" alt="خريطة" />
+
+            <div
+                class="point"
+                style="top: 5%; left: 62%"
+                onclick="
+                    showInfo(
+                        event,
+                        'مقاومة القبائل',
+                        'لالة فاطمة نسومر',
+                        'القبائل',
+                        '1851',
+                        '1857',
+                        'wa3',
+                    )
+                "
+            ></div>
+
+            <div
+                class="point"
+                style="top: 21%; left: 71%"
+                onclick="
+                    showInfo(
+                        event,
+                        'مقاومة الزعاطشة',
+                        'شريف بوزيان (بوبغلة)',
+                        'بسكرة، الأوراس',
+                        '1848',
+                        '1849',
+                        'wa3',
+                        'leader_images/boubeghla.png',
+                    )
+                "
+            ></div>
+
+            <div
+                class="point"
+                style="top: 9%; left: 59%"
+                onclick="
+                    showInfo(
+                        event,
+                        'مقاومة اولاد سيدي الشيخ',
+                        'سليمان، احمد بن حمزة',
+                        'التيطري، سور الغزلان',
+                        '1864',
+                        '1880',
+                        'wa3',
+                    )
+                "
+            ></div>
+
+            <div
+                class="point"
+                style="top: 7%; left: 67%"
+                onclick="
+                    showInfo(
+                        event,
+                        'مقاومة المقراني و الشيخ الحداد ',
+                        'المقراني و الشيخ الحداد ',
+                        'سطيف، البرج',
+                        '1871',
+                        '1872',
+                        'wa3',
+                        'leader_images/moukrani.png',
+                    )
+                "
+            ></div>
+
+            <div id="infoBox" class="info-box"></div>
+
+            <button class="reset-btn" onclick="resetInfo()">
+                محو المعلومات
+            </button>
+        </div>
+
+        <div class="timeline-container" dir="ltr">
+            <input
+                type="range"
+                id="timeline"
+                min="1830"
+                max="1919"
+                value="1830"
+            />
+            <span id="year">1830</span>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
