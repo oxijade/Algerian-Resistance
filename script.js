@@ -1,4 +1,13 @@
+let lastClickedElement = null;
+
 function showInfo(event, title, leader, geo, min_year, max_year, des, imageSrc) {
+    if (lastClickedElement === event.target) {
+        resetInfo();
+        return;
+    }
+
+    lastClickedElement = event.target;
+
     const container = document.querySelector(".map-container");
 
     const newBox = document.createElement("div");
@@ -73,6 +82,8 @@ function resetInfo() {
         img.classList.add("hide");
         img.addEventListener("transitionend", () => img.remove(), { once: true });
     });
+
+    lastClickedElement = null;
 }
 
 const slider = document.getElementById("timeline");
