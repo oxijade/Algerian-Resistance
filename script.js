@@ -1,3 +1,25 @@
+// ========== GESTION DES ONGLETS ==========
+function openTab(event, tabId) {
+    // Masquer tous les contenus d'onglets
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(content => {
+        content.classList.remove('active');
+    });
+
+    // Désactiver tous les boutons d'onglets
+    const tabButtons = document.querySelectorAll('.tab-button');
+    tabButtons.forEach(button => {
+        button.classList.remove('active');
+    });
+
+    // Afficher le contenu de l'onglet sélectionné
+    document.getElementById(tabId).classList.add('active');
+    
+    // Activer le bouton cliqué
+    event.currentTarget.classList.add('active');
+}
+
+// ========== CODE DE LA CARTE ==========
 let lastClickedElement = null;
 
 function showInfo(event, title, leader, geo, min_year, max_year, des, imageSrc) {
@@ -13,9 +35,9 @@ function showInfo(event, title, leader, geo, min_year, max_year, des, imageSrc) 
     const newBox = document.createElement("div");
     newBox.className = "info-box";
     if (max_year == min_year) {
-        newBox.innerHTML = "<b>" + "المقاومة: " + title + "</b>" + "<des>" + leader + "<br>" + geo + "<br>" + min_year + "<br>" + des + "</des>";
+        newBox.innerHTML = "<b>" + "المقاومة: " + title + "</b>" + "<des>" + "قادتها: " + leader + "<br>" + "إطارها المكاني: " + geo + "<br>" + "إطارها الزمني: " + min_year + "<br>" + des + "</des>";
     } else {
-        newBox.innerHTML = "<b>" + "المقاومة: " + title + "</b>" + "<des>" + leader + "<br>" + geo + "<br>" + min_year + " - " + max_year + "<br>" + des + "</des>";
+        newBox.innerHTML = "<b>" + "المقاومة: " + title + "</b>" + "<des>" + "قادتها: " + leader + "<br>" + "إطارها المكاني: " + geo + "<br>" + "إطارها الزمني: " + min_year + " - " + max_year + "<br>" + des + "</des>";
     };
     newBox.style.top = event.target.style.top;
     newBox.style.left = event.target.style.left;
@@ -30,7 +52,6 @@ function showInfo(event, title, leader, geo, min_year, max_year, des, imageSrc) 
         newImage.style.height = "150px";
         newImage.style.top = event.target.style.top;
 
-        const container = document.querySelector(".map-container");
         const containerWidth = container.offsetWidth;
         const imageWidth = 150;
         const pointLeftPercent = parseFloat(event.target.style.left);
@@ -86,21 +107,20 @@ function resetInfo() {
     lastClickedElement = null;
 }
 
-const slider = document.getElementById("timeline");
-const year = document.getElementById("year");
 let isTimelineActive = false;
 
 function toggleTimeline() {
     const timelineWrapper = document.querySelector(".timeline-wrapper");
+    const slider = document.getElementById("timeline");
     isTimelineActive = !isTimelineActive;
     
     if (isTimelineActive) {
         timelineWrapper.classList.add("active");
-        // Activer le filtrage avec l'année actuelle
-        filterPointsByYear(parseInt(slider.value));
+        if (slider) {
+            filterPointsByYear(parseInt(slider.value));
+        }
     } else {
         timelineWrapper.classList.remove("active");
-        // Désactiver le filtrage - afficher tous les points
         showAllPoints();
     }
 }
@@ -114,7 +134,6 @@ function showAllPoints() {
 }
 
 function filterPointsByYear(selectedYear) {
-    // Réinitialiser les infos affichées avant de filtrer
     resetInfo();
     
     const points = document.querySelectorAll(".point");
@@ -131,17 +150,20 @@ function filterPointsByYear(selectedYear) {
     });
 }
 
-slider.addEventListener("input", () => {
-    const selectedYear = parseInt(slider.value);
-    year.textContent = selectedYear;
-    // Ne filtrer que si la timeline est active
-    if (isTimelineActive) {
-        filterPointsByYear(selectedYear);
-    }
-});
-
-// Initialiser le filtrage au chargement de la page
+// Initialiser au chargement
 window.addEventListener("DOMContentLoaded", () => {
     showAllPoints();
+    
+    const slider = document.getElementById("timeline");
+    const year = document.getElementById("year");
+    
+    if (slider && year) {
+        slider.addEventListener("input", () => {
+            const selectedYear = parseInt(slider.value);
+            year.textContent = selectedYear;
+            if (isTimelineActive) {
+                filterPointsByYear(selectedYear);
+            }
+        });
+    }
 });
-
