@@ -317,6 +317,7 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    color: #ffffff;
 }
 
 .timeline-wrapper-dual {
@@ -333,7 +334,7 @@ body {
     display: flex;
     align-items: center;
     gap: 30px;
-    color: #ddd;
+    color: #ffffff;
 }
 
 input[type="range"] {
