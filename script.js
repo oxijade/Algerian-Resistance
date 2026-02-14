@@ -39,88 +39,57 @@ function showInfo(event, title, leader, geo, min_year, max_year, des, imageSrc) 
 
     // Trouver le container parent
     const container = event.target.closest('.map-container') || event.target.closest('.map-container-dual');
-    const containerRect = container.getBoundingClientRect();
-    const pointRect = event.target.getBoundingClientRect();
 
-    // Créer la boîte d'info
+    // CrÃ©er la boÃ®te d'info
     const newBox = document.createElement("div");
     newBox.className = "info-box";
     const yearText = max_year == min_year ? min_year : `${min_year} - ${max_year}`;
     newBox.innerHTML = `<b>${title}</b><des>القادة: ${leader}<br>الإطار المكاني: ${geo}<br>الإطار الزماني: ${yearText}<br>${des}</des>`;
-    
-    // Calculer la position optimale
+    newBox.style.top = event.target.style.top;
+    newBox.style.left = event.target.style.left;
     container.appendChild(newBox);
-    
-    // Laisser le temps au navigateur de calculer les dimensions
-    requestAnimationFrame(() => {
-        const boxRect = newBox.getBoundingClientRect();
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        
-        // Position par défaut (centrée sur le point)
-        let left = parseFloat(event.target.style.left);
-        let top = parseFloat(event.target.style.top);
-        
-        // Vérifier les débordements horizontaux
-        const pointLeftPx = (left / 100) * containerRect.width;
-        const boxWidth = boxRect.width;
-        
-        // Ajuster si la boîte dépasse à droite
-        if (pointLeftPx + boxWidth / 2 > containerRect.width) {
-            left = ((containerRect.width - boxWidth - 10) / containerRect.width) * 100;
-        }
-        // Ajuster si la boîte dépasse à gauche
-        else if (pointLeftPx - boxWidth / 2 < 0) {
-            left = (10 / containerRect.width) * 100;
-        }
-        
-        // Ajustement vertical (éviter que la boîte ne sorte en haut/bas)
-        const pointTopPx = (top / 100) * containerRect.height;
-        const boxHeight = boxRect.height;
-        
-        if (pointTopPx + boxHeight / 2 > containerRect.height) {
-            top = ((containerRect.height - boxHeight - 10) / containerRect.height) * 100;
-        } else if (pointTopPx - boxHeight / 2 < 0) {
-            top = (10 / containerRect.height) * 100;
-        }
-        
-        newBox.style.left = left + '%';
-        newBox.style.top = top + '%';
-        
-        // Gestion de l'image
-        if (imageSrc) {
-            const newImage = document.createElement("img");
-            newImage.className = "point-image";
-            newImage.src = imageSrc;
-            newImage.style.width = window.innerWidth <= 768 ? "200px" : "300px";
-            newImage.style.height = window.innerWidth <= 768 ? "200px" : "300px";
-            
-            // Positionner l'image à gauche du point
-            const imageLeft = left - (parseFloat(newImage.style.width) / containerRect.width) * 100 - 2;
-            newImage.style.left = Math.max(0, imageLeft) + '%';
-            newImage.style.top = top + '%';
-            
-            container.appendChild(newImage);
-            requestAnimationFrame(() => newImage.classList.add("show"));
-        }
-        
-        requestAnimationFrame(() => newBox.classList.add("show"));
-    });
 
-    // Supprimer les anciennes boîtes et images
-    const oldBoxes = document.querySelectorAll(".info-box:not(:last-child)");
+    // CrÃ©er l'image si fournie
+    let newImage = null;
+    if (imageSrc) {
+        newImage = document.createElement("img");
+        newImage.className = "point-image";
+        newImage.src = imageSrc;
+        newImage.style.width = "300px";
+        newImage.style.height = "300px";
+        newImage.style.top = event.target.style.top;
+
+        const containerWidth = container.offsetWidth;
+        const pointLeftPercent = parseFloat(event.target.style.left);
+        const pointLeftPx = (pointLeftPercent / 100) * containerWidth;
+        const imageLeftPx = pointLeftPx - 310; // 150px + 10px gap
+        const imageLeftPercent = (imageLeftPx / containerWidth) * 100;
+
+        newImage.style.left = imageLeftPercent + '%';
+        container.appendChild(newImage);
+        requestAnimationFrame(() => newImage.classList.add("show"));
+    }
+
+    requestAnimationFrame(() => newBox.classList.add("show"));
+
+    // Supprimer les anciennes boÃ®tes et images
+    const oldBoxes = document.querySelectorAll(".info-box");
     const oldImages = document.querySelectorAll(".point-image");
 
     oldBoxes.forEach(box => {
-        box.classList.remove("show");
-        box.classList.add("hide");
-        box.addEventListener("transitionend", () => box.remove(), { once: true });
+        if (box !== newBox) {
+            box.classList.remove("show");
+            box.classList.add("hide");
+            box.addEventListener("transitionend", () => box.remove(), { once: true });
+        }
     });
 
     oldImages.forEach(img => {
-        img.classList.remove("show");
-        img.classList.add("hide");
-        img.addEventListener("transitionend", () => img.remove(), { once: true });
+        if (img !== newImage) {
+            img.classList.remove("show");
+            img.classList.add("hide");
+            img.addEventListener("transitionend", () => img.remove(), { once: true });
+        }
     });
 }
 
