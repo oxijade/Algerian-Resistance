@@ -22,7 +22,7 @@ body {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 60px;
     font-weight: 600;
     color: #555;
     transition: all 0.3s ease;
@@ -333,6 +333,7 @@ body {
     display: flex;
     align-items: center;
     gap: 30px;
+    color: #ddd;
 }
 
 input[type="range"] {
@@ -623,14 +624,4 @@ input[type="range"]::-moz-range-thumb {
     .accordion-arrow {
         margin-left: 10px;
     }
-}
-
-/* ========== BOUTONS ========== */
-.dark {
-    background-color: #282828;
-    color: white;
-}
-
-.dark a {
-    color: #4da3ff;
 }
