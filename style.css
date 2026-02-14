@@ -5,7 +5,7 @@ body {
     padding: 0;
 }
 
-/* ========== STYLES DES ONGLETS ========== */
+/* ========== ONGLETS ========== */
 .tabs {
     display: flex;
     background: #ffffff;
@@ -50,7 +50,6 @@ body {
     background: #d32f2f;
 }
 
-/* Contenu des onglets */
 .tab-content {
     display: none;
     animation: fadeIn 0.4s ease;
@@ -71,7 +70,7 @@ body {
     }
 }
 
-/* Wrapper pour le contenu texte */
+/* ========== CONTENU TEXTE ========== */
 .content-wrapper {
     max-width: 900px;
     margin: 40px auto;
@@ -115,30 +114,101 @@ body {
     margin-bottom: 12px;
 }
 
-/* ========== STYLES DE LA CARTE ========== */
-.map-container {
+/* ========== CARTES ========== */
+.map-container,
+.map-container-dual {
     position: relative;
+    width: 100%;
+}
+
+.map-container {
     width: 800px;
     margin: 40px auto;
 }
 
-.map-container img {
+.map-container img,
+.map-container-dual img {
     width: 100%;
     display: block;
     border-radius: 18px;
 }
 
-.point {
+.map-container-dual img {
+    border-radius: 12px;
+}
+
+/* ========== CARTES DUALES ========== */
+.dual-maps-container {
+    display: flex;
+    gap: 30px;
+    padding: 40px;
+    max-width: 1600px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.map-section {
+    flex: 1;
+    min-width: 600px;
+    background: white;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.map-title {
+    text-align: center;
+    color: #d32f2f;
+    font-size: 24px;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #d32f2f;
+    padding-bottom: 10px;
+}
+
+/* ========== POINTS ========== */
+.point,
+.point-dual {
     position: absolute;
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
     background-color: red;
     border-radius: 50%;
     cursor: pointer;
     transform: translate(-50%, -50%);
     box-shadow: 0 0 0 2px white;
+    transition: all 0.3s ease;
+    z-index: 5;
 }
 
+.point-dual {
+    width: 16px;
+    height: 16px;
+    box-shadow: 0 0 0 3px white, 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.point.ahmed,
+.point-dual.ahmed {
+    background-color: #2196F3;
+}
+
+.point.emir,
+.point-dual.emir {
+    background-color: #4CAF50;
+}
+
+.point:hover {
+    width: 14px;
+    height: 14px;
+    box-shadow: 0 0 0 3px white;
+}
+
+.point-dual:hover {
+    width: 18px;
+    height: 18px;
+    box-shadow: 0 0 0 4px white, 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+/* ========== INFO BOX ========== */
 .info-box {
     position: absolute;
     background: white;
@@ -187,6 +257,7 @@ body {
     font-size: 10px;
 }
 
+/* ========== IMAGES ========== */
 .point-image {
     position: absolute;
     object-fit: cover;
@@ -210,9 +281,10 @@ body {
     transform: translateY(15%);
 }
 
+/* ========== BOUTONS ========== */
 .button {
     position: absolute;
-    top: 20px;
+    top: 70px;
     left: 20px;
     padding: 10px 20px;
     border: none;
@@ -229,10 +301,12 @@ body {
 }
 
 .timeline-toggle-btn {
-    top: 70px;
+    top: 20px;
 }
 
-.timeline-wrapper {
+/* ========== TIMELINE ========== */
+.timeline-wrapper,
+.timeline-wrapper-dual {
     display: none;
     background: white;
     border-radius: 18px;
@@ -246,7 +320,12 @@ body {
     background-repeat: no-repeat;
 }
 
-.timeline-wrapper.active {
+.timeline-wrapper-dual {
+    max-width: 1400px;
+}
+
+.timeline-wrapper.active,
+.timeline-wrapper-dual.active {
     display: block;
 }
 
@@ -283,7 +362,8 @@ input[type="range"]::-moz-range-thumb {
     cursor: pointer;
 }
 
-#year {
+#year,
+#year-dual {
     font-size: 14px;
     min-width: 40px;
     font-weight: bold;

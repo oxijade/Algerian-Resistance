@@ -2,20 +2,27 @@
 function openTab(event, tabId) {
     // Masquer tous les contenus d'onglets
     const tabContents = document.querySelectorAll('.tab-content');
-    tabContents.forEach(content => {
-        content.classList.remove('active');
+    tabContents.forEach(content => content.classList.remove('active'));
+    
+    // Désactiver la timeline si active
+    const timelineWrappers = document.querySelectorAll('.timeline-wrapper, .timeline-wrapper-dual');
+    timelineWrappers.forEach(wrapper => {
+        if (wrapper.classList.contains('active')) {
+            wrapper.classList.remove('active');
+        }
     });
+    
+    // Réinitialiser les états
+    isTimelineActive = false;
+    isTimelineDualActive = false;
+    showAllPoints();
 
     // Désactiver tous les boutons d'onglets
     const tabButtons = document.querySelectorAll('.tab-button');
-    tabButtons.forEach(button => {
-        button.classList.remove('active');
-    });
+    tabButtons.forEach(button => button.classList.remove('active'));
 
-    // Afficher le contenu de l'onglet sélectionné
+    // Afficher le contenu de l'onglet sélectionné et activer le bouton
     document.getElementById(tabId).classList.add('active');
-    
-    // Activer le bouton cliqué
     event.currentTarget.classList.add('active');
 }
 
@@ -30,19 +37,19 @@ function showInfo(event, title, leader, geo, min_year, max_year, des, imageSrc) 
 
     lastClickedElement = event.target;
 
-    const container = document.querySelector(".map-container");
+    // Trouver le container parent
+    const container = event.target.closest('.map-container') || event.target.closest('.map-container-dual');
 
+    // Créer la boîte d'info
     const newBox = document.createElement("div");
     newBox.className = "info-box";
-    if (max_year == min_year) {
-        newBox.innerHTML = "<b>" + "المقاومة: " + title + "</b>" + "<des>" + "قادتها: " + leader + "<br>" + "إطارها المكاني: " + geo + "<br>" + "إطارها الزمني: " + min_year + "<br>" + des + "</des>";
-    } else {
-        newBox.innerHTML = "<b>" + "المقاومة: " + title + "</b>" + "<des>" + "قادتها: " + leader + "<br>" + "إطارها المكاني: " + geo + "<br>" + "إطارها الزمني: " + min_year + " - " + max_year + "<br>" + des + "</des>";
-    };
+    const yearText = max_year == min_year ? min_year : `${min_year} - ${max_year}`;
+    newBox.innerHTML = `<b>${title}</b><des>قادتها: ${leader}<br>إطارها المكاني: ${geo}<br>إطارها الزمني: ${yearText}<br>${des}</des>`;
     newBox.style.top = event.target.style.top;
     newBox.style.left = event.target.style.left;
     container.appendChild(newBox);
 
+    // Créer l'image si fournie
     let newImage = null;
     if (imageSrc) {
         newImage = document.createElement("img");
@@ -53,21 +60,19 @@ function showInfo(event, title, leader, geo, min_year, max_year, des, imageSrc) 
         newImage.style.top = event.target.style.top;
 
         const containerWidth = container.offsetWidth;
-        const imageWidth = 150;
         const pointLeftPercent = parseFloat(event.target.style.left);
         const pointLeftPx = (pointLeftPercent / 100) * containerWidth;
-
-        const imageLeftPx = pointLeftPx - imageWidth - 10;
+        const imageLeftPx = pointLeftPx - 160; // 150px + 10px gap
         const imageLeftPercent = (imageLeftPx / containerWidth) * 100;
 
         newImage.style.left = imageLeftPercent + '%';
-
         container.appendChild(newImage);
         requestAnimationFrame(() => newImage.classList.add("show"));
     }
 
     requestAnimationFrame(() => newBox.classList.add("show"));
 
+    // Supprimer les anciennes boîtes et images
     const oldBoxes = document.querySelectorAll(".info-box");
     const oldImages = document.querySelectorAll(".point-image");
 
@@ -107,53 +112,64 @@ function resetInfo() {
     lastClickedElement = null;
 }
 
+// ========== GESTION DE LA TIMELINE (GÉNÉRIQUE) ==========
 let isTimelineActive = false;
+let isTimelineDualActive = false;
 
-function toggleTimeline() {
-    const timelineWrapper = document.querySelector(".timeline-wrapper");
-    const slider = document.getElementById("timeline");
-    isTimelineActive = !isTimelineActive;
+function toggleTimeline(isDual = false) {
+    const wrapperClass = isDual ? ".timeline-wrapper-dual" : ".timeline-wrapper";
+    const sliderId = isDual ? "timeline-dual" : "timeline";
+    const pointSelector = isDual ? "#tab1 .point" : ".point";
     
-    if (isTimelineActive) {
+    const timelineWrapper = document.querySelector(wrapperClass);
+    const slider = document.getElementById(sliderId);
+    
+    if (isDual) {
+        isTimelineDualActive = !isTimelineDualActive;
+    } else {
+        isTimelineActive = !isTimelineActive;
+    }
+    
+    const isActive = isDual ? isTimelineDualActive : isTimelineActive;
+    
+    if (isActive) {
         timelineWrapper.classList.add("active");
         if (slider) {
-            filterPointsByYear(parseInt(slider.value));
+            filterPointsByYear(parseInt(slider.value), pointSelector);
         }
     } else {
         timelineWrapper.classList.remove("active");
-        showAllPoints();
+        showAllPoints(pointSelector);
     }
 }
 
-function showAllPoints() {
+function showAllPoints(selector = ".point") {
     resetInfo();
-    const points = document.querySelectorAll(".point");
-    points.forEach(point => {
-        point.style.display = "block";
-    });
+    const points = document.querySelectorAll(selector);
+    points.forEach(point => point.style.display = "block");
 }
 
-function filterPointsByYear(selectedYear) {
+function filterPointsByYear(selectedYear, selector = ".point") {
     resetInfo();
-    
-    const points = document.querySelectorAll(".point");
+    const points = document.querySelectorAll(selector);
     
     points.forEach(point => {
         const minYear = parseInt(point.getAttribute("data-min-year"));
         const maxYear = parseInt(point.getAttribute("data-max-year"));
-        
-        if (selectedYear >= minYear && selectedYear <= maxYear) {
-            point.style.display = "block";
-        } else {
-            point.style.display = "none";
-        }
+        point.style.display = (selectedYear >= minYear && selectedYear <= maxYear) ? "block" : "none";
     });
 }
 
-// Initialiser au chargement
+// Wrappers pour compatibilité
+function toggleTimelineDual() {
+    toggleTimeline(true);
+}
+
+// ========== INITIALISATION ==========
 window.addEventListener("DOMContentLoaded", () => {
     showAllPoints();
     
+    // Timeline standard
     const slider = document.getElementById("timeline");
     const year = document.getElementById("year");
     
@@ -163,6 +179,20 @@ window.addEventListener("DOMContentLoaded", () => {
             year.textContent = selectedYear;
             if (isTimelineActive) {
                 filterPointsByYear(selectedYear);
+            }
+        });
+    }
+    
+    // Timeline dual
+    const sliderDual = document.getElementById("timeline-dual");
+    const yearDual = document.getElementById("year-dual");
+    
+    if (sliderDual && yearDual) {
+        sliderDual.addEventListener("input", () => {
+            const selectedYear = parseInt(sliderDual.value);
+            yearDual.textContent = selectedYear;
+            if (isTimelineDualActive) {
+                filterPointsByYear(selectedYear, "#tab1 .point");
             }
         });
     }
