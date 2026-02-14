@@ -4,7 +4,7 @@ function openTab(event, tabId) {
     const tabContents = document.querySelectorAll('.tab-content');
     tabContents.forEach(content => content.classList.remove('active'));
     
-    // Désactiver la timeline si active
+    // DÃ©sactiver la timeline si active
     const timelineWrappers = document.querySelectorAll('.timeline-wrapper, .timeline-wrapper-dual');
     timelineWrappers.forEach(wrapper => {
         if (wrapper.classList.contains('active')) {
@@ -12,16 +12,16 @@ function openTab(event, tabId) {
         }
     });
     
-    // Réinitialiser les états
+    // RÃ©initialiser les Ã©tats
     isTimelineActive = false;
     isTimelineDualActive = false;
     showAllPoints();
 
-    // Désactiver tous les boutons d'onglets
+    // DÃ©sactiver tous les boutons d'onglets
     const tabButtons = document.querySelectorAll('.tab-button');
     tabButtons.forEach(button => button.classList.remove('active'));
 
-    // Afficher le contenu de l'onglet sélectionné et activer le bouton
+    // Afficher le contenu de l'onglet sÃ©lectionnÃ© et activer le bouton
     document.getElementById(tabId).classList.add('active');
     event.currentTarget.classList.add('active');
 }
@@ -40,29 +40,29 @@ function showInfo(event, title, leader, geo, min_year, max_year, des, imageSrc) 
     // Trouver le container parent
     const container = event.target.closest('.map-container') || event.target.closest('.map-container-dual');
 
-    // Créer la boîte d'info
+    // CrÃ©er la boÃ®te d'info
     const newBox = document.createElement("div");
     newBox.className = "info-box";
     const yearText = max_year == min_year ? min_year : `${min_year} - ${max_year}`;
-    newBox.innerHTML = `<b>${title}</b><des>قادتها: ${leader}<br>إطارها المكاني: ${geo}<br>إطارها الزمني: ${yearText}<br>${des}</des>`;
+    newBox.innerHTML = `<b>${title}</b><des>القادة: ${leader}<br>الإطار المكاني: ${geo}<br>الإطار الزماني: ${yearText}<br>${des}</des>`;
     newBox.style.top = event.target.style.top;
     newBox.style.left = event.target.style.left;
     container.appendChild(newBox);
 
-    // Créer l'image si fournie
+    // CrÃ©er l'image si fournie
     let newImage = null;
     if (imageSrc) {
         newImage = document.createElement("img");
         newImage.className = "point-image";
         newImage.src = imageSrc;
-        newImage.style.width = "150px";
-        newImage.style.height = "150px";
+        newImage.style.width = "300px";
+        newImage.style.height = "300px";
         newImage.style.top = event.target.style.top;
 
         const containerWidth = container.offsetWidth;
         const pointLeftPercent = parseFloat(event.target.style.left);
         const pointLeftPx = (pointLeftPercent / 100) * containerWidth;
-        const imageLeftPx = pointLeftPx - 160; // 150px + 10px gap
+        const imageLeftPx = pointLeftPx - 310; // 150px + 10px gap
         const imageLeftPercent = (imageLeftPx / containerWidth) * 100;
 
         newImage.style.left = imageLeftPercent + '%';
@@ -72,7 +72,7 @@ function showInfo(event, title, leader, geo, min_year, max_year, des, imageSrc) 
 
     requestAnimationFrame(() => newBox.classList.add("show"));
 
-    // Supprimer les anciennes boîtes et images
+    // Supprimer les anciennes boÃ®tes et images
     const oldBoxes = document.querySelectorAll(".info-box");
     const oldImages = document.querySelectorAll(".point-image");
 
@@ -112,7 +112,7 @@ function resetInfo() {
     lastClickedElement = null;
 }
 
-// ========== GESTION DE LA TIMELINE (GÉNÉRIQUE) ==========
+// ========== GESTION DE LA TIMELINE (GÃ‰NÃ‰RIQUE) ==========
 let isTimelineActive = false;
 let isTimelineDualActive = false;
 
@@ -160,7 +160,7 @@ function filterPointsByYear(selectedYear, selector = ".point") {
     });
 }
 
-// Wrappers pour compatibilité
+// Wrappers pour compatibilitÃ©
 function toggleTimelineDual() {
     toggleTimeline(true);
 }
@@ -197,3 +197,20 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+// ========== JAVASCRIPT POUR LES ACCORDÃ‰ONS - TAB3 ==========
+
+function toggleAccordion(header) {
+    const item = header.parentElement;
+    const isActive = item.classList.contains('active');
+    
+    // Fermer tous les accordÃ©ons
+    document.querySelectorAll('.accordion-item').forEach(acc => {
+        acc.classList.remove('active');
+    });
+    
+    // Ouvrir l'accordÃ©on cliquÃ© (sauf s'il Ã©tait dÃ©jÃ  ouvert)
+    if (!isActive) {
+        item.classList.add('active');
+    }
+}
